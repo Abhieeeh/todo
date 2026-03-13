@@ -11,12 +11,13 @@ function login(){
           "Content-Type":"application/json"},
           body:JSON.stringify({email,password})
       });
-      //const data=await response.json();
-      //console.log(data);
+      const data=await response.json();
+      console.log(data);
     }
 
     return(
      <div>
+      <h1>Login Here</h1>
     <input type="text"value={email} onChange={(e)=>setEmail(e.target.value)} placeholder="Enter Your Email"></input>
     <input type="password"value={password} onChange={(e)=>setPassword(e.target.value)} placeholder="Enter Your Password"></input>
     <button onClick={handlesubmit}>Submit</button>
