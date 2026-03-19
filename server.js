@@ -1,17 +1,20 @@
 import express from 'express';
-//import axios from 'axios';
 import bodyParser from 'body-parser';
 import {Client} from "pg";
-import { generateToken } from './token.js';
-//import bycrypt from 'bcrypt';
+import jwt from 'jsonwebtoken';
+import dotenv from "dotenv";
+dotenv.config();
 
 const app = express();
 const port = 3000;  
 app.use(express.json());
 
 
+
+
+
 app.use(bodyParser.urlencoded({ extended: true }));
- const db=new Client({
+const db=new Client({
     user:'postgres',
     host:'localhost',
     database:'Todo',
@@ -38,17 +41,14 @@ app.post('/auth',async(req,res)=>{
             console.log('Error executing query',err);
         }else{
             if(result.rows.length>0){
-                console.log('User already exists');
+                res.json({error:'User already exists   Try another mail Id'});
             }else{
-                db.query("INSERT INTO user_auth (email,password) VALUES ($1,$2)",[email,password],(err,result)=>{
-     
+                db.query("INSERT INTO user_auth (email,password) VALUES ($1,$2)",[email,password],(err,result)=>{  
                 if(err){
-                  console.log('Error executing query',err);
-            
-                   }else{
-                   console.log('Database query executed');
-                     const token= generateToken({email});
-                        res.json({token:token});
+                  console.log('Error executing query',err);           
+                }else{
+                  res.json({message:'Registered sucessfully \n Please Login, you will be redirected to login page in 3 seconds'});
+                  
             }
      });
             }
@@ -66,4 +66,28 @@ app.listen(port, () => {
 
 app.post("/login",async(req,res)=>{
     console.log("working");
+    const {email,password}=req.body;
+    db.query("SELECT * FROM user_auth WHERE email=$1",[email],(err,result)=>{
+        if(err){
+            return res.json({error:'Error executing query'});
+        }
+        if(result.rows.length>0){
+            if(result.rows[0].password==password){
+                try{
+                    const user=result.rows[0];
+                const token=jwt.sign(user,process.env.Token_Secret);
+                res.json({message:'Login successful',token:token});
+            
+                
+                }catch(error){
+                    console.error('Error generating token:',error);
+                    res.json({error:'Error generating token'});
+                }
+            }else{
+                res.json({error:'Invalid password'});
+            }
+        }else{
+            res.json({message:"Not Registered \n Please Sign Up First"});
+        }
+    });
 });

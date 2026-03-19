@@ -2,6 +2,7 @@ import react from "react";
 import Home from "./components/home";
 import Autherisation from "./components/auth";
 import Login from "./components/login";
+import Todos from "./components/todos";
 import {BrowserRouter as Router,Route,Routes} from "react-router-dom";
 
 function App(){
@@ -12,9 +13,11 @@ function App(){
       <Routes>
         <Route path="/" element={<Home/>}/>
         <Route path="/auth.jsx" element={<Autherisation/>}/>
-        <Route path="/login" element={<Login/>}/>
+        <Route path="/login" element={<Login/>}/> 
+        <Route path="/todos" element={<Todos/>}/>
       </Routes>
     </Router>
+  
   
 
   </div>
