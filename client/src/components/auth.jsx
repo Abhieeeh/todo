@@ -22,7 +22,7 @@ function autherisation(){
        else {
         setTimeout(() => {
           navigate("/login");
-        }, 1000);
+        }, 3000);
         setMessage(data.message);
       }
     }
