@@ -91,12 +91,45 @@ app.post("/login",async(req,res)=>{
     });
 });
 
-app.post("/fetchtodos",async(req,res)=>{
+
+
+
+
+
+
+
+
+
+
+
+
+
+app.get("/todos",async(req,res)=>{
     const token=req.headers.token;
     const data=jwt.verify(token,process.env.Token_Secret);
     console.log(data.id);
-    res.json({message:"working of /fetchtodos"});
+    db.query("SELECT * FROM user_todo WHERE user_id=$1",[data.id],(err,result)=>{
+        if(err){
+            console.log(err);
+        }else{
+            var todos=result.rows.map((item)=>item.title);
+            res.json({todos:todos});
+        }
 });
+});
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 app.post("/todos",async(req,res)=>{
     console.log("working of /todos");

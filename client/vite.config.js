@@ -14,6 +14,8 @@ export default defineConfig({
     proxy:{
       "/auth":"http://localhost:3000",
       "/login":"http://localhost:3000",
+      "/todos":"http://localhost:3000",
+      
     }
   }
 })
