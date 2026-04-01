@@ -9,7 +9,7 @@ const app = express();
 const port = 3000;  
 app.use(express.json());
 
-
+var todolist = [];
 
 
 
@@ -18,7 +18,7 @@ const db=new Client({
     user:'postgres',
     host:'localhost',
     database:'Todo',
-    password:'Abhishekk@112006',
+    password:process.env.pass,
     port:5432
  });
 
@@ -65,7 +65,7 @@ app.listen(port, () => {
 
 
 app.post("/login",async(req,res)=>{
-    console.log("working");
+    console.log("working of /login");
     const {email,password}=req.body;
     db.query("SELECT * FROM user_auth WHERE email=$1",[email],(err,result)=>{
         if(err){
@@ -74,11 +74,10 @@ app.post("/login",async(req,res)=>{
         if(result.rows.length>0){
             if(result.rows[0].password==password){
                 try{
-                    const user=result.rows[0];
+                const user=result.rows[0];
+                const userId =result.rows[0].id;
                 const token=jwt.sign(user,process.env.Token_Secret);
-                res.json({message:'Login successful',token:token});
-            
-                
+                res.json({message:'Login successful',token:token});               
                 }catch(error){
                     console.error('Error generating token:',error);
                     res.json({error:'Error generating token'});
@@ -90,4 +89,33 @@ app.post("/login",async(req,res)=>{
             res.json({message:"Not Registered \n Please Sign Up First"});
         }
     });
+});
+
+app.post("/fetchtodos",async(req,res)=>{
+    const token=req.headers.token;
+    const data=jwt.verify(token,process.env.Token_Secret);
+    console.log(data.id);
+    res.json({message:"working of /fetchtodos"});
+});
+
+app.post("/todos",async(req,res)=>{
+    console.log("working of /todos");
+    const token=req.headers.token;
+    const data=jwt.verify(token,process.env.Token_Secret);
+    console.log(data.id);
+    db.query("INSERT INTO user_todo (user_id,title) VALUES ($1,$2)",[data.id,req.body.newTodo],(err,result)=>{
+        if(err){
+            console.log(err);
+
+        }else{
+            console.log("working of insertion");
+            db.query("SELECT * FROM user_todo WHERE user_id=$1",[data.id],(err,result)=>{
+                if(err){
+                    console.log(err);
+                }else{
+                    var todos=result.rows.map((item)=>item.title);
+                    res.json({todos:todos});
+                }});
+        }});
+    
 });
