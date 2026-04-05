@@ -92,7 +92,17 @@ app.post("/login",async(req,res)=>{
 });
 
 
-
+app.get("/todos/completed",async(req,res)=>{
+    const token=req.headers.token;
+    const data=jwt.verify(token,process.env.Token_Secret);  
+    db.query("SELECT * FROM user_todo WHERE user_id=$1 and is_completed=$2",[data.id,true],(err,result)=>{
+        if(err){
+            console.log(err);   
+        }else{
+            var todos=result.rows.map((item)=>item.title);
+            res.json({todos:todos});
+        }
+});});
 
 
 
@@ -108,7 +118,7 @@ app.get("/todos",async(req,res)=>{
     const token=req.headers.token;
     const data=jwt.verify(token,process.env.Token_Secret);
     console.log(data.id);
-    db.query("SELECT * FROM user_todo WHERE user_id=$1",[data.id],(err,result)=>{
+    db.query("SELECT * FROM user_todo WHERE user_id=$1 and is_completed=$2",[data.id,false],(err,result)=>{
         if(err){
             console.log(err);
         }else{
@@ -121,10 +131,20 @@ app.get("/todos",async(req,res)=>{
 
 
 
+app.put("/todos",async(req,res)=>{
+    const item=req.headers.item;
+    const token=req.headers.token;
+    const data=jwt.verify(token,process.env.Token_Secret);
 
-
-
-
+   db.query("UPDATE user_todo SET is_completed=true WHERE title=$1 and user_id=$2",[item,data.id],(err,result)=>{
+        if(err){
+            console.log(err);
+        }else{
+            res.json({message:"Checkbox updated successfully"});
+            console.log("working of checkbox update");
+        }
+    });
+});
 
 
 
@@ -136,13 +156,13 @@ app.post("/todos",async(req,res)=>{
     const token=req.headers.token;
     const data=jwt.verify(token,process.env.Token_Secret);
     console.log(data.id);
-    db.query("INSERT INTO user_todo (user_id,title) VALUES ($1,$2)",[data.id,req.body.newTodo],(err,result)=>{
+    db.query("INSERT INTO user_todo (user_id,title,is_completed) VALUES ($1,$2,$3)",[data.id,req.body.newTodo,false],(err,result)=>{
         if(err){
             console.log(err);
 
         }else{
             console.log("working of insertion");
-            db.query("SELECT * FROM user_todo WHERE user_id=$1",[data.id],(err,result)=>{
+            db.query("SELECT * FROM user_todo WHERE user_id=$1 and is_completed=$2",[data.id,false],(err,result)=>{
                 if(err){
                     console.log(err);
                 }else{
@@ -151,4 +171,19 @@ app.post("/todos",async(req,res)=>{
                 }});
         }});
     
+});
+
+
+app.delete("/todos",async(req,res)=>{
+   const item=req.body.item;
+   const token=req.headers.token;
+   const data=jwt.verify(token,process.env.Token_Secret);
+  db.query("DELETE FROM user_todo WHERE title=$1 and user_id=$2",[item,data.id],(err,result)=>{
+    if(err){
+        console.log(err);
+    }else{
+        console.log("working of deletion");
+        res.json({message:"Deleted Successfully"});
+    }
+});
 });
