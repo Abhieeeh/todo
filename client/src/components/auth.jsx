@@ -1,5 +1,6 @@
 import react ,{useState} from "react";
 import {useNavigate} from "react-router-dom";
+import { UserPlus } from "lucide-react";
 
 
 function autherisation(){
@@ -27,12 +28,12 @@ function autherisation(){
       }
     }
     return(
-        <div>
+        <div className="container">
           <h1>Sign Up Here</h1>
-          {message && <p>{message}</p>}
+          {message && <p style={{color: '#1a4f1a', fontWeight: 'bold'}}>{message}</p>}
         <input type="text" value={email} onChange={(e)=>setEmail(e.target.value)} placeholder="Enter Your Email"></input>
         <input type="password" value={password} onChange={(e)=>setPassword(e.target.value)} placeholder="Enter Your Password"></input>
-        <button onClick={handlesubmit}>Submit</button>
+        <button onClick={handlesubmit}><UserPlus size={18} /> Submit</button>
         
         </div>
     );
