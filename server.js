@@ -9,8 +9,6 @@ const app = express();
 const port = 3000;  
 app.use(express.json());
 
-var todolist = [];
-
 
 
 app.use(bodyParser.urlencoded({ extended: true }));
@@ -23,7 +21,6 @@ const db=new Client({
  });
 
  
-
 
 db.connect((err)=>{
     if(err){
@@ -51,10 +48,7 @@ app.post('/auth',async(req,res)=>{
                   
             }
      });
-            }
-
-        
-    
+    }         
 }})});
 
 

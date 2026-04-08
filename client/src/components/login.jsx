@@ -1,5 +1,6 @@
 import react ,{useState} from "react";
 import { useNavigate } from "react-router-dom";
+import { LogIn } from "lucide-react";
 
 function login(){
     const navigate=useNavigate();
@@ -31,12 +32,12 @@ function login(){
       
 
     return(
-     <div>
+     <div className="container">
       <h1>Login Here</h1>
-      {message && <p>{message}</p>}
+      {message && <p style={{color: '#791a1a', fontWeight: 'bold'}}>{message}</p>}
     <input type="text"value={email} onChange={(e)=>setEmail(e.target.value)} placeholder="Enter Your Email"></input>
     <input type="password"value={password} onChange={(e)=>setPassword(e.target.value)} placeholder="Enter Your Password"></input>
-    <button onClick={handlesubmit}>Submit</button>
+    <button onClick={handlesubmit}><LogIn size={18} /> Submit</button>
     </div>
     );
 }

@@ -46,14 +46,6 @@ const completedTodo=async()=>{
 
 
 
-
-
-
-
-
-
-
-
 const DeleteHandle=async(item)=>{
   const token = localStorage.getItem('token');
   const response=await fetch("/todos",{
@@ -87,11 +79,6 @@ const handleCompleted=async(item)=>{
   fetchTodos();
 }
 
-
-
-
-
-  
 
 
   const handleclick=async(e)=>{
