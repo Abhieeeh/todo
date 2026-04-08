@@ -13,11 +13,11 @@ app.use(express.json());
 
 app.use(bodyParser.urlencoded({ extended: true }));
 const db=new Client({
-    user:'postgres',
-    host:'localhost',
-    database:'Todo',
+    user:process.env.user,
+    host:process.env.host,
+    database:process.env.database,
     password:process.env.pass,
-    port:5432
+    port:process.env.port
  });
 
  
