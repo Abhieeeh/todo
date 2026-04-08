@@ -166,3 +166,30 @@ li {
 .btn-completing {
   animation: checkmarkPop 0.4s ease-out forwards;
 }
+
+@keyframes popPulse {
+  0% { transform: scale(1); }
+  50% { transform: scale(0.9); background-color: var(--primary-hover); }
+  100% { transform: scale(1); }
+}
+
+.btn-adding {
+  animation: popPulse 0.3s ease-out;
+}
+
+@keyframes trashShake {
+  0% { transform: rotate(0deg); }
+  25% { transform: rotate(-15deg); color: #b71c1c; }
+  50% { transform: rotate(15deg); }
+  75% { transform: rotate(-15deg); }
+  100% { transform: rotate(0deg); }
+}
+
+.btn-deleting {
+  animation: trashShake 0.4s ease-out forwards;
+}
+
+.item-deleting {
+  animation: slideOutRight 0.4s ease-out forwards;
+  background-color: #ffcdd2 !important;
+}
