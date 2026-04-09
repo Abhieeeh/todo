@@ -3,6 +3,7 @@ import bodyParser from 'body-parser';
 import {Client} from "pg";
 import jwt from 'jsonwebtoken';
 import dotenv from "dotenv";
+import bcrypt from "bcrypt";
 dotenv.config();
 
 const app = express();
@@ -33,14 +34,15 @@ db.connect((err)=>{
 app.post('/auth',async(req,res)=>{
     console.log('req.body:',req.body);
     const {email,password}=req.body;
-    db.query("SELECT * FROM user_auth WHERE email=$1",[email],(err,result)=>{
+    await db.query("SELECT * FROM user_auth WHERE email=$1",[email],(err,result)=>{
         if(err){
             console.log('Error executing query',err);
         }else{
             if(result.rows.length>0){
                 res.json({error:'User already exists   Try another mail Id'});
             }else{
-                db.query("INSERT INTO user_auth (email,password) VALUES ($1,$2)",[email,password],(err,result)=>{  
+                const hashedPassword =  bcrypt.hash(password, 10);
+                db.query("INSERT INTO user_auth (email,password) VALUES ($1,$2)",[email,hashedPassword],(err,result)=>{  
                 if(err){
                   console.log('Error executing query',err);           
                 }else{
@@ -66,7 +68,9 @@ app.post("/login",async(req,res)=>{
             return res.json({error:'Error executing query'});
         }
         if(result.rows.length>0){
-            if(result.rows[0].password==password){
+            const hashedPass=result.rows[0].password;
+            const IsMatch=bcrypt.compare(password,hashedPass)
+            if(IsMatch){
                 try{
                 const user=result.rows[0];
                 const userId =result.rows[0].id;
@@ -80,7 +84,7 @@ app.post("/login",async(req,res)=>{
                 res.json({error:'Invalid password'});
             }
         }else{
-            res.json({message:"Not Registered \n Please Sign Up First"});
+            res.json({message:"Not Registered...Please Sign Up First"});
         }
     });
 });
